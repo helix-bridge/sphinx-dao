@@ -15,7 +15,6 @@ contract AcceptOwnership1 is Base {
 
     function run() public sphinx {
         address dao = safeAddress();
-        safeconsole.log("dao:", dao);
         if (dao == III(HelixBridge).pendingDao()) {
             III(HelixBridge).acceptOwnership();
         }
