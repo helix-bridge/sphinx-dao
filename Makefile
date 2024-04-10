@@ -7,8 +7,7 @@ all    :; @forge build
 fmt    :; @forge fmt
 clean  :; @forge clean
 
-propose-deploy-test  :; @SPHINX_API_KEY=$(SPHINX_API_KEY) npx sphinx propose ./script/Deploy.s.sol  --networks testnets
-propose-deploy-prod  :; @SPHINX_API_KEY=$(SPHINX_API_KEY) npx sphinx propose ./script/Deploy.s.sol  --networks mainnets
+propose:; @SPHINX_API_KEY=$(SPHINX_API_KEY) npx sphinx propose ./script/common/Proposal.s.sol --networks mainnets
 
 sphinx :; @yarn sphinx install
 sync   :; @git submodule update --recursive

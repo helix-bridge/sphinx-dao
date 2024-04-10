@@ -15,7 +15,8 @@ contract Base is Sphinx, Script {
         ];
         sphinxConfig.orgId = "cluanacaw000111jik4xs4wkl";
         sphinxConfig.threshold = 3;
-        sphinxConfig.projectName = "Helix DAO";
-        sphinxConfig.mainnets = ["polygon", "arbitrum", "optimism", "mantle"];
+        sphinxConfig.projectName = "Helix-DAO";
+        // sphinxConfig.mainnets = ["polygon", "arbitrum", "optimism", "mantle"];
+        sphinxConfig.mainnets = ["polygon", "arbitrum", "optimism"];
     }
 }

@@ -1,0 +1,32 @@
+name: Sphinx Propose
+env:
+    SPHINX_API_KEY: ${{ secrets.SPHINX_API_KEY }}
+    PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+on: 
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  sphinx-propose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Foundry
+        uses: foundry/foundry-toolchain@v1
+        with:
+          version: nightly
+      - name: Install Dependencies
+        run: yarn --frozen-lockfile
+      - name: Install Sphinx Solidity Library
+        run: yarn sphinx install
+      - name: Propose
+        run: npx sphinx propose ./script/common/Proposal.s.sol --confirm --networks <NETWORK_NAMES>

@@ -1,4 +1,5 @@
 [profile.default]
+solc_version = "0.8.17"
 script = 'script'
 test = 'test'
 extra_output = ['storageLayout']
@@ -9,6 +10,6 @@ libs = ["lib"]
 
 [rpc_endpoints]
 anvil = "http://127.0.0.1:8545"
-sepolia = "https://eth-sepolia.g.alchemy.com/v2/${RPC_API_KEY}"
-optimism_sepolia = "https://opt-sepolia.g.alchemy.com/v2/${RPC_API_KEY}"
-arbitrum_sepolia = "https://arb-sepolia.g.alchemy.com/v2/${RPC_API_KEY}"
+polygon = "https://polygon-rpc.com"
+optimism = "https://rpc.ankr.com/optimism	"
+arbitrum = "https://arb1.arbitrum.io/rpc"
