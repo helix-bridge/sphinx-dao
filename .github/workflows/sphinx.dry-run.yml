@@ -3,7 +3,12 @@ env:
     SPHINX_API_KEY: ${{ secrets.SPHINX_API_KEY }}
     PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
 
 jobs:
   sphinx-dry-run:
