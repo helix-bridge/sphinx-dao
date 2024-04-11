@@ -11,7 +11,7 @@ contract Base is Sphinx, Script {
             0x00E3993566b34e5367d1C602439997BD08c11FF7, // Alex
             0x52386BE2397e8EAc26298F733b390684203fB580, // Denny
             0xe59261f6D4088BcD69985A3D369Ff14cC54EF1E5, // Ranji
-            0xd2c7008400F54aA70Af01CF8C747a4473246593E // Xiaoch
+            0x88a39B052d477CfdE47600a7C9950a441Ce61cb4 // Xiaoch
         ];
         sphinxConfig.orgId = "cluanacaw000111jik4xs4wkl";
         sphinxConfig.threshold = 3;
