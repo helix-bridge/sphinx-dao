@@ -7,7 +7,7 @@ import "@sphinx-labs/contracts/SphinxPlugin.sol";
 contract Base is Sphinx, Script {
     function configureSphinx() public override {
         sphinxConfig.owners = [
-            0x0f14341A7f464320319025540E8Fe48Ad0fe5aec, // CI
+            0x0f14341A7f464320319025540E8Fe48Ad0fe5aec, // Echo
             0x00E3993566b34e5367d1C602439997BD08c11FF7, // Alex
             0x52386BE2397e8EAc26298F733b390684203fB580, // Denny
             0xe59261f6D4088BcD69985A3D369Ff14cC54EF1E5, // Ranji
