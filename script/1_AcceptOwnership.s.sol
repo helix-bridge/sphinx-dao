@@ -18,5 +18,6 @@ contract AcceptOwnership1 is Base {
         if (dao == III(HelixBridge).pendingDao()) {
             III(HelixBridge).acceptOwnership();
         }
+        require(III(HelixBridge).dao() == dao, "failed");
     }
 }
