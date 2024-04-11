@@ -1,4 +1,4 @@
-# sphinx-dao
+# Helix DAO
 
 ## Sphinx Safe Address
 ```sh
