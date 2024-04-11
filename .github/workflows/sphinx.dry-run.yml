@@ -1,7 +1,6 @@
 name: Sphinx Dry Run
 env:
     SPHINX_API_KEY: ${{ secrets.SPHINX_API_KEY }}
-    PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
 on:
   pull_request:
