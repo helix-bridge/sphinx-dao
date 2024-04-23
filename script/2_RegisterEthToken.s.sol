@@ -41,13 +41,13 @@ contract RegisterEthToken is Base {
     function run() public sphinx {
         uint256 remoteChainId = (block.chainid == OptimisticChainId ? ArbitrumChainId : OptimisticChainId); // arbitrum
         address nativeAddress = address(0);
-        uint256 protocolFee = 1000000000000000;
-        uint256 penalty = 1500000000000000;
+        uint112 protocolFee = 1000000000000000;
+        uint112 penalty = 1500000000000000;
         uint8 decimals = 18;
-        uint index = 1;
+        uint32 index = 1;
         require(block.chainid == OptimisticChainId || block.chainid == ArbitrumChainId);
         require(block.chainid != remoteChainId, "invalid chainid");
-        uint256 tokenKey = IHelixBridgeV3(HelixBridge).getTokenKey(
+        bytes32 tokenKey = IHelixBridgeV3(HelixBridge).getTokenKey(
             remoteChainId,
             nativeAddress,
             nativeAddress
