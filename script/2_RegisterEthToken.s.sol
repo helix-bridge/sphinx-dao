@@ -19,14 +19,17 @@ interface IHelixBridgeV3 {
 
 contract RegisterEthToken is Base {
     address HelixBridge = 0xbA5D580B18b6436411562981e02c8A9aA1776D10;
+    uint256 OptimisticChainId = 10;
+    uint256 ArbitrumChainId = 42161;
 
     function run() public sphinx {
-        uint256 remoteChainId = 42161; // arbitrum
+        uint256 remoteChainId = (block.chainid == OptimisticChainId ? ArbitrumChainId : OptimisticChainId); // arbitrum
         address nativeAddress = address(0);
         uint256 protocolFee = 1000000000000000;
         uint256 penalty = 1500000000000000;
         uint8 decimals = 18;
         uint index = 1;
+        require(block.chainid == OptimisticChainId || block.chainid == ArbitrumChainId);
         require(block.chainid != remoteChainId, "invalid chainid");
         uint256 tokenKey = IHelixBridgeV3(HelixBridge).getTokenKey(
             remoteChainId,
