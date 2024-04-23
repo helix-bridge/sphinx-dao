@@ -11,5 +11,5 @@ libs = ["lib"]
 [rpc_endpoints]
 anvil = "http://127.0.0.1:8545"
 polygon = "https://polygon-rpc.com"
-optimism = "https://rpc.ankr.com/optimism	"
+optimism = "https://rpc.ankr.com/optimism"
 arbitrum = "https://arb1.arbitrum.io/rpc"
