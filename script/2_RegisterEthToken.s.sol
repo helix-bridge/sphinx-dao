@@ -5,16 +5,32 @@ import {Base} from "./common/Base.sol";
 import {safeconsole} from "forge-std/safeconsole.sol";
 
 interface IHelixBridgeV3 {
+    struct TokenConfigure {
+        uint112 protocolFee;
+        uint112 penalty;
+        uint8 sourceDecimals;
+        uint8 targetDecimals;
+    }
+    struct TokenInfo {
+        TokenConfigure config;
+        uint32 index;
+        address sourceToken;
+        address targetToken;
+        uint256 protocolFeeIncome;
+    }
     function registerTokenInfo(
-        uint256 remoteChainId,
-        address sourceToken,
-        address targetToken,
-        uint112 protocolFee,
-        uint112 penalty,
-        uint8 sourceDecimals,
-        uint8 targetDecimals,
-        uint32 index
+        uint256 _remoteChainId,
+        address _sourceToken,
+        address _targetToken,
+        uint112 _protocolFee,
+        uint112 _penalty,
+        uint8 _sourceDecimals,
+        uint8 _targetDecimals,
+        uint32 _index
     ) external;
+    function getTokenKey(uint256 _remoteChainId, address _sourceToken, address _targetToken) pure external returns(bytes32);
+    function tokenInfos(bytes32 key) view external returns(TokenInfo memory);
+    function tokenIndexer(uint32 index) view external returns(bytes32);
 }
 
 contract RegisterEthToken is Base {
