@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {RegisterEthToken} from "../2_RegisterEthToken.s.sol";
+import {2_RegisterEthTokenArbAndOp} from "../2_RegisterEthTokenArbAndOp.s.sol";
 
-contract Proposal is RegisterEthToken {}
+contract Proposal is 2_RegisterEthTokenArbAndOp {}
