@@ -33,7 +33,7 @@ interface IHelixBridgeV3 {
     function tokenIndexer(uint32 index) view external returns(bytes32);
 }
 
-contract RegisterEthToken is Base {
+contract RegisterEthTokenArbAndOp is Base {
     address HelixBridge = 0xbA5D580B18b6436411562981e02c8A9aA1776D10;
     uint256 OptimisticChainId = 10;
     uint256 ArbitrumChainId = 42161;
