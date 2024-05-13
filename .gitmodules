@@ -7,3 +7,6 @@
 [submodule "lib/openzeppelin-contracts"]
 	path = lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "lib/@helix/contracts"]
+	path = lib/@helix/contracts
+	url = https://github.com/helix-bridge/contracts.git
