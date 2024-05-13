@@ -10,3 +10,6 @@
 [submodule "lib/@helix/contracts"]
 	path = lib/@helix/contracts
 	url = https://github.com/helix-bridge/contracts.git
+[submodule "lib/@zeppelin-solidity/contracts"]
+	path = lib/@zeppelin-solidity/contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts.git
