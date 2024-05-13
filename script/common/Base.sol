@@ -4,10 +4,6 @@ pragma solidity ^0.8.0;
 import {Script} from "forge-std/Script.sol";
 import "@sphinx-labs/contracts/SphinxPlugin.sol";
 
-interface Create2Deploy {
-    function deploy(bytes memory code, uint256 salt) external;
-}
-
 contract Base is Sphinx, Script {
     function configureSphinx() public override {
         sphinxConfig.owners = [
@@ -21,29 +17,6 @@ contract Base is Sphinx, Script {
         sphinxConfig.threshold = 3;
         sphinxConfig.projectName = "Helix-DAO";
         // sphinxConfig.mainnets = ["polygon", "arbitrum", "optimism", "mantle"];
-        sphinxConfig.mainnets = ["arbitrum", "optimism"];
-    }
-
-    function create2deployAddress() internal returns(address) {
-        return address(0);
-    }
-
-    function create2deploy(uint256 salt, bytes memory initCode) internal returns (address) {
-        address deployer = create2deployAddress[block.chainid];
-        require(deployer != address(0), "deployer not exist");
-        Create2Deploy(deployer).deploy(initCode, salt);
-    }
-
-    function create2address(bytes32 salt, bytes32 bytecodeHash) internal view returns (address addr) {
-        address deployer = create2deployAddress[block.chainid];
-        assembly {
-            let ptr := mload(0x40)
-            mstore(add(ptr, 0x40), bytecodeHash)
-            mstore(add(ptr, 0x20), salt)
-            mstore(ptr, deployer)
-            let start := add(ptr, 0x0b)
-            mstore8(start, 0xff)
-            addr := and(keccak256(start, 85), 0xffffffffffffffffffffffffffffffffffffffff)
-        }
+        sphinxConfig.mainnets = ["linea", "polygon", "arbitrum", "optimism", "blast"];
     }
 }

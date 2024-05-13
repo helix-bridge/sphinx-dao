@@ -2,6 +2,11 @@
 pragma solidity ^0.8.0;
 
 import {Base} from "./Base.sol";
+import "./LnBridgeV3.sol";
+
+interface Create2Deploy {
+    function deploy(bytes memory code, uint256 salt) external;
+}
 
 interface ILnv3Bridge {
     struct MessagerService {
@@ -24,7 +29,7 @@ interface ILnv3Bridge {
     function messagers(uint256 remoteChainId) view external returns(MessagerService memory);
     function setSendService(uint256 remoteChainId, address remoteBridge, address service) external;
     function setReceiveService(uint256 remoteChainId, address remoteBridge, address service) external;
-    function getTokenKey(uint256 remoteChainId, address sourceToken, address targetToken) pure public returns(bytes32);
+    function getTokenKey(uint256 remoteChainId, address sourceToken, address targetToken) pure external returns(bytes32);
     function tokenInfos(bytes32 key) view external returns(TokenInfo memory);
     function tokenIndexer(uint32 index) view external returns(bytes32);
     function registerTokenInfo(
@@ -41,7 +46,7 @@ interface ILnv3Bridge {
 
 interface IErc20 {
     function decimals() view external returns(uint8);
-    function symbol() view external returns(string);
+    function symbol() view external returns(string memory);
 }
 
 interface IMsgportMessager {
@@ -79,6 +84,7 @@ contract LnBridgeV3Base is Base {
     uint256 constant CHAINID_ASTAR_ZKEVM = 3776;
     // helix-lnbridge-v3.0.0
     uint256 constant salt = 0x68656c69782d6c6e6272696467652d76332e302e30;
+    uint256[] public allChainIds;
 
     enum MessagerType {
         LayerzeroType,
@@ -89,18 +95,56 @@ contract LnBridgeV3Base is Base {
     struct TokenInfo {
         address token;
         uint8 decimals;
+        string symbol;
         bool configured;
     }
 
     // the address on each chain
     mapping(uint256=>address) public lnBridgeAddresses;
-    mapping(uint256=>uint256) public lzChainIds;
+    mapping(uint256=>uint16) public lzChainIds;
     mapping(uint256=>address) public deployers;
     mapping(bytes32=>address) private messagers;
     mapping(bytes32=>TokenInfo) private tokens;
 
+    function create2deployAddress() internal view returns(address) {
+        return address(0);
+    }
+
+    function create2deploy(uint256 _salt, bytes memory initCode) internal {
+        address deployer = create2deployAddress();
+        require(deployer != address(0), "deployer not exist");
+        Create2Deploy(deployer).deploy(initCode, _salt);
+    }
+
+    function create2address(uint256 _salt, bytes32 bytecodeHash) internal view returns (address addr) {
+        address deployer = create2deployAddress();
+        assembly {
+            let ptr := mload(0x40)
+            mstore(add(ptr, 0x40), bytecodeHash)
+            mstore(add(ptr, 0x20), _salt)
+            mstore(ptr, deployer)
+            let start := add(ptr, 0x0b)
+            mstore8(start, 0xff)
+            addr := and(keccak256(start, 85), 0xffffffffffffffffffffffffffffffffffffffff)
+        }
+    }
+
     function initLnBridgeAddress() public {
         address commonAddress = 0xbA5D580B18b6436411562981e02c8A9aA1776D10;
+        allChainIds.push(CHAINID_ETHEREUM);
+        allChainIds.push(CHAINID_ARBITRUM);
+        allChainIds.push(CHAINID_POLYGON_POS);
+        allChainIds.push(CHAINID_BSC);
+        allChainIds.push(CHAINID_LINEA);
+        allChainIds.push(CHAINID_BASE);
+        allChainIds.push(CHAINID_OP);
+        allChainIds.push(CHAINID_GNOSIS);
+        allChainIds.push(CHAINID_MANTLE);
+        allChainIds.push(CHAINID_SCROLL);
+        allChainIds.push(CHAINID_POLYGON_ZKEVM);
+        allChainIds.push(CHAINID_BLAST);
+        allChainIds.push(CHAINID_ASTAR_ZKEVM);
+
         lnBridgeAddresses[CHAINID_ETHEREUM] = commonAddress;
         lnBridgeAddresses[CHAINID_ARBITRUM] = commonAddress;
         lnBridgeAddresses[CHAINID_POLYGON_POS] = commonAddress;
@@ -156,7 +200,7 @@ contract LnBridgeV3Base is Base {
         configureMessager(CHAINID_OP, MessagerType.LayerzeroType, 0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1);
         configureMessager(CHAINID_GNOSIS, MessagerType.LayerzeroType, 0x3F7DF5866591e7E48D18C8EbeAE61Bc343a63283);
         configureMessager(CHAINID_MANTLE, MessagerType.LayerzeroType, 0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1);
-        configureMessager(CHAINID_SCROLL, MessagerType.LayerzeroType, 0x463d1730a8527ca58d48ef70c7460b9920346567);
+        configureMessager(CHAINID_SCROLL, MessagerType.LayerzeroType, 0x463D1730a8527CA58d48EF70C7460B9920346567);
         configureMessager(CHAINID_POLYGON_ZKEVM, MessagerType.LayerzeroType, 0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1);
         configureMessager(CHAINID_BLAST, MessagerType.LayerzeroType, 0x8A87497488073307E1a17e8A12475a94Afcb413f);
         configureMessager(CHAINID_BLAST, MessagerType.MsgportType, 0x98982b1685a63596834a05C1288dA7fbF27d684E);
@@ -185,22 +229,22 @@ contract LnBridgeV3Base is Base {
         configureTokenInfo(CHAINID_ASTAR_ZKEVM, "usdc", 0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4, 6);
     }
 
-    function configureMessager(uint256 chainId, uint256 messagerType, address messagerAddress) internal {
+    function configureMessager(uint256 chainId, MessagerType messagerType, address messagerAddress) internal {
         bytes32 key = keccak256(abi.encodePacked(chainId, messagerType));
         messagers[key] = messagerAddress;
     }
 
-    function configureTokenInfo(uint256 chainId, string symbol, address token, uint8 decimals) internal {
+    function configureTokenInfo(uint256 chainId, string memory symbol, address token, uint8 decimals) internal {
         bytes32 key = keccak256(abi.encodePacked(chainId, symbol));
-        tokens[key] = TokenInfo(token, decimals, true);
+        tokens[key] = TokenInfo(token, decimals, symbol, true);
     }
 
-    function getMessagerFromConfigure(uint256 chainId, uint256 messagerType) public view returns(address messager) {
+    function getMessagerFromConfigure(uint256 chainId, MessagerType messagerType) public view returns(address messager) {
         bytes32 key = keccak256(abi.encodePacked(chainId, messagerType));
         messager = messagers[key];
     }
 
-    function getTokenFromConfigure(uint256 chainId, string symbol) public view returns(TokenInfo memory) {
+    function getTokenFromConfigure(uint256 chainId, string memory symbol) public view returns(TokenInfo memory) {
         bytes32 key = keccak256(abi.encodePacked(chainId, symbol));
         return tokens[key];
     }
@@ -213,14 +257,13 @@ contract LnBridgeV3Base is Base {
         receiver = service.receiveService;
     }
 
-    function checkTokenAddressOnChain(string symbol) public view {
+    function checkTokenAddressOnChain(string memory symbol) public view {
         TokenInfo memory tokenInfo = getTokenFromConfigure(block.chainid, symbol);
         // ignore unconfigured token
         if (!tokenInfo.configured) {
             return;
         }
         require(IErc20(tokenInfo.token).decimals() == tokenInfo.decimals, "decimals not match");
-        require(IErc20(tokenInfo.token).symbol() == tokenInfo.symbol, "symbol not match");
     }
 
     // the proposol method
@@ -228,12 +271,12 @@ contract LnBridgeV3Base is Base {
     function connectMessager(uint256 remoteChainId, MessagerType messagerType) public {
         uint256 localChainId = block.chainid;
         address localMessager = getMessagerFromConfigure(localChainId, messagerType);
-        require(localMessager != address(0), "local message not exist");
+        require(localMessager != address(0), "local messager not exist");
         address remoteMessager = getMessagerFromConfigure(remoteChainId, messagerType);
-        require(remoteMessager != address(0), "remote message not exist");
+        require(remoteMessager != address(0), "remote messager not exist");
 
         if (messagerType == MessagerType.LayerzeroType) {
-            uint256 lzRemoteChainId = lzChainIds[remoteChainId];
+            uint16 lzRemoteChainId = lzChainIds[remoteChainId];
             require(lzRemoteChainId != 0, "invalid lzchainid");
             ILayerZeroMessager.RemoteMessager memory oldMessager = ILayerZeroMessager(localMessager).remoteMessagers(remoteChainId);
             // if the same configure, don't send tx
@@ -274,15 +317,15 @@ contract LnBridgeV3Base is Base {
     // register token
     function registerToken(
         uint256 remoteChainId,
-        string localSymbol,
-        string remoteSymbol,
+        string memory localSymbol,
+        string memory remoteSymbol,
         uint112 protocolFee,
         uint112 penalty
     ) public {
         uint256 localChainId = block.chainid;
-        TokenInfo localInfo = getTokenFromConfigure(localChainId, localSymbol);
+        TokenInfo memory localInfo = getTokenFromConfigure(localChainId, localSymbol);
         require(localInfo.configured, "local token not exist");
-        TokenInfo remoteInfo = getTokenFromConfigure(remoteChainId, remoteSymbol);
+        TokenInfo memory remoteInfo = getTokenFromConfigure(remoteChainId, remoteSymbol);
         require(remoteInfo.configured, "remote token not exist");
 
         address localBridge = lnBridgeAddresses[localChainId];
@@ -314,7 +357,7 @@ contract LnBridgeV3Base is Base {
         bytes memory byteCode = type(HelixProxyAdmin).creationCode;
         address dao = safeAddress();
         bytes memory initCode = bytes.concat(byteCode, abi.encode(dao));
-        address expectedAddress = create2address(byteCode, keccak256(initCode));
+        address expectedAddress = create2address(salt, keccak256(initCode));
         if (expectedAddress.code.length == 0) {
             create2deploy(salt, initCode);
         }
@@ -327,7 +370,7 @@ contract LnBridgeV3Base is Base {
         bytes memory byteCode = type(MsgportMessager).creationCode;
         address dao = safeAddress();
         bytes memory initCode = bytes.concat(byteCode, abi.encode(dao, msgport));
-        address expectedAddress = create2address(byteCode, keccak256(initCode));
+        address expectedAddress = create2address(salt, keccak256(initCode));
         if (expectedAddress.code.length == 0) {
             create2deploy(salt, initCode);
         }
@@ -336,11 +379,11 @@ contract LnBridgeV3Base is Base {
     }
 
     // deploy layerzero messager
-    function deployMsgportMessager(address endpoint) external returns(address) {
+    function deployLayerzeroMessager(address endpoint) external returns(address) {
         bytes memory byteCode = type(LayerZeroMessager).creationCode;
         address dao = safeAddress();
         bytes memory initCode = bytes.concat(byteCode, abi.encode(dao, endpoint));
-        address expectedAddress = create2address(byteCode, keccak256(initCode));
+        address expectedAddress = create2address(salt, keccak256(initCode));
         if (expectedAddress.code.length == 0) {
             create2deploy(salt, initCode);
         }
@@ -351,7 +394,7 @@ contract LnBridgeV3Base is Base {
     // deploy lnv3 logic
     function deployLnBridgeV3Logic() external returns(address) {
         bytes memory byteCode = type(HelixLnBridgeV3).creationCode;
-        address expectedAddress = create2address(byteCode, keccak256(byteCode));
+        address expectedAddress = create2address(salt, keccak256(byteCode));
         if (expectedAddress.code.length == 0) {
             create2deploy(salt, byteCode);
         }
@@ -366,10 +409,10 @@ contract LnBridgeV3Base is Base {
         bytes memory data = abi.encodeWithSelector(
             HelixLnBridgeV3.initialize.selector,
             dao,
-            bytes(0)
+            bytes("0x")
         );
         bytes memory initCode = bytes.concat(byteCode, abi.encode(logicAddress, proxyAdminAddress, data));
-        address expectedAddress = create2address(byteCode, keccak256(initCode));
+        address expectedAddress = create2address(salt, keccak256(initCode));
         if (expectedAddress.code.length == 0) {
             create2deploy(salt, initCode);
         }
