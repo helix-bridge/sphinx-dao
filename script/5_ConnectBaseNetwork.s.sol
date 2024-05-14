@@ -8,18 +8,21 @@ contract ConnectBaseNetwork is LnBridgeV3Base {
     function run() public sphinx {
         initLnBridgeAddress();
         uint256 localChainId = block.chainid;
+        uint256 CHAINID_BASE = chainName2chainId["base"];
+        uint256 CHAINID_ETHEREUM = chainName2chainId["ethereum"];
         if (localChainId == CHAINID_BASE) {
-            for (uint idx = 0; idx < allChainIds.length; idx++) {
-                uint256 remoteChainId = allChainIds[idx];
+            for (uint idx = 0; idx < allChainNames.length; idx++) {
+                string memory remoteChainName = allChainNames[idx];
+                uint256 remoteChainId = chainName2chainId[remoteChainName];
                 if (remoteChainId == CHAINID_ETHEREUM) {
                     continue;
                 }
-                connectMessager(remoteChainId, MessagerType.LayerzeroType);
-                connectBridge(remoteChainId, MessagerType.LayerzeroType);
+                connectMessager(remoteChainName, "layerzero");
+                connectBridge(remoteChainName, "layerzero");
             }
         } else {
-            connectMessager(CHAINID_BASE, MessagerType.LayerzeroType);
-            connectBridge(CHAINID_BASE, MessagerType.LayerzeroType);
+            connectMessager("base", "layerzero");
+            connectBridge("base", "layerzero");
         }
     }
 }

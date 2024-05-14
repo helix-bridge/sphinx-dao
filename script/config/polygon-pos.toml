@@ -1,0 +1,25 @@
+[base]
+name = "polygon-pos"
+chainId = 137
+deployer = "0x80D4c766C5142D1313D531Afe7384D0D5E108Db3"
+bridgev3 = "0xbA5D580B18b6436411562981e02c8A9aA1776D10"
+
+[messager]
+[messager.messagers]
+types = ["layerzero"]
+
+[messager.layerzero]
+id = 109
+messager = "0x463D1730a8527CA58d48EF70C7460B9920346567"
+
+[token]
+[token.symbols]
+symbols = ["usdt", "ring"]
+
+[token.usdt]
+address = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
+decimals = 6
+
+[token.ring]
+address = "0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f"
+decimals = 18

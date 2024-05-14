@@ -3,7 +3,12 @@ solc_version = "0.8.17"
 script = 'script'
 test = 'test'
 extra_output = ['storageLayout']
-fs_permissions=[{access="read", path="./out"}, {access="read-write", path="./cache"}]
+evm_version = "london"
+fs_permissions=[
+  {access="read", path="./out"},
+  {access="read", path= "./script/config" },
+  {access="read-write", path="./cache"},
+]
 allow_paths = ["../.."]
 auto_detect_remappings = false
 libs = ["lib"]

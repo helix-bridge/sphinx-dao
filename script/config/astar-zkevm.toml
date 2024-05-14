@@ -1,0 +1,25 @@
+[base]
+name = "astar-zkevm"
+chainId = 3776
+deployer = "0x9bc1C7567DDBcaF2212185b6665D755d842d01E4"
+bridgev3 = "0xD476650e03a45E70202b0bcAfa04E1513920f83a"
+
+[messager]
+[messager.messagers]
+types = ["layerzero"]
+
+[messager.layerzero]
+id = 257
+messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
+
+[token]
+[token.symbols]
+symbols = ["usdt", "usdc"]
+
+[token.usdt]
+address = "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C"
+decimals = 6
+
+[token.usdc]
+address = "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4"
+decimals = 6
