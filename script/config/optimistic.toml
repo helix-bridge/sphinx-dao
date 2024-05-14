@@ -1,0 +1,21 @@
+[base]
+name = "optimistic"
+chainId = 10
+deployer = "0x80D4c766C5142D1313D531Afe7384D0D5E108Db3"
+bridgev3 = "0xbA5D580B18b6436411562981e02c8A9aA1776D10"
+
+[messager]
+[messager.messagers]
+types = ["layerzero"]
+
+[messager.layerzero]
+id = 111
+messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
+
+[token]
+[token.symbols]
+symbols = ["usdt"]
+
+[token.usdt]
+address = "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58"
+decimals = 6

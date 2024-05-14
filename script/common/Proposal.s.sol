@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UpdateArbOpEthProtocolFee4} from "../4_UpdateArbOpEthProtocolFee.s.sol";
+import {AcceptOwnership5} from "../5_AcceptOwnership.s.sol";
 
-contract Proposal is UpdateArbOpEthProtocolFee4 {}
+contract Proposal is AcceptOwnership5 {}

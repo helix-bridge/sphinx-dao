@@ -1,0 +1,25 @@
+[base]
+name = "scroll"
+chainId = 534352
+deployer = "0x80D4c766C5142D1313D531Afe7384D0D5E108Db3"
+bridgev3 = "0xbA5D580B18b6436411562981e02c8A9aA1776D10"
+
+[messager]
+[messager.messagers]
+types = ["layerzero"]
+
+[messager.layerzero]
+id = 214
+messager = "0x463D1730a8527CA58d48EF70C7460B9920346567"
+
+[token]
+[token.symbols]
+symbols = ["usdt"]
+
+[token.usdt]
+address = "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df"
+decimals = 6
+
+[token.usdc]
+address = "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4"
+decimals = 6

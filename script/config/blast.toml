@@ -1,0 +1,26 @@
+[base]
+name = "blast"
+chainId = 81457
+deployer = "0x9bc1C7567DDBcaF2212185b6665D755d842d01E4"
+bridgev3 = "0xB180D7DcB5CC161C862aD60442FA37527546cAFC"
+
+[messager]
+[messager.messagers]
+types = ["layerzero", "msgport"]
+
+[messager.layerzero]
+id = 243
+messager = "0x8A87497488073307E1a17e8A12475a94Afcb413f"
+
+[messager.msgport]
+id = 81457
+messager = "0x98982b1685a63596834a05C1288dA7fbF27d684E"
+
+[token]
+[token.symbols]
+symbols = ["usdb"]
+
+[token.usdb]
+address = "0x4300000000000000000000000000000000000003"
+decimals = 6
+
