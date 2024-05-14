@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Base} from "./Base.sol";
 import {stdToml} from "forge-std/StdToml.sol";
+import {console} from "forge-std/console.sol";
 import "./LnBridgeV3.sol";
 
 interface Create2Deploy {
@@ -43,6 +44,9 @@ interface ILnv3Bridge {
         uint8 targetDecimals,
         uint32 index
     ) external;
+    function dao() view external returns(address);
+    function pendingDao() view external returns(address);
+    function acceptOwnership() external;
 }
 
 interface IErc20 {
@@ -129,7 +133,11 @@ contract LnBridgeV3Base is Base {
     }
 
     function initLnBridgeAddress() public {
-        string[2] memory chains = ["arbitrum", "astar-zkevm"];
+        messagerName2messagerType['layerzero'] = MessagerType.LayerzeroType;
+        messagerName2messagerType['msgport'] = MessagerType.MsgportType;
+        messagerName2messagerType['eth2arb'] = MessagerType.Eth2ArbType;
+
+        string[14] memory chains = ["arbitrum", "astar-zkevm", "base", "blast", "bsc", "ethereum", "gnosis", "linea", "mantle", "optimistic", "polygon-pos", "polygon-zkevm", "scroll", "darwinia"];
         for (uint i = 0; i < chains.length; i++) {
             readConfig(chains[i]);
         }
@@ -140,6 +148,7 @@ contract LnBridgeV3Base is Base {
         string memory root = vm.projectRoot();
         string memory config = vm.readFile(string.concat(root, "/script/config/", chainName, ".toml"));
         uint256 chainId = config.readUint(".base.chainId");
+        chainName2chainId[chainName] = chainId;
         address deployer = config.readAddress(".base.deployer");
         address bridger = config.readAddress(".base.bridgev3");
         bridgerInfos[chainId] = BridgeInfo(chainName, chainId, deployer, bridger);
@@ -150,9 +159,9 @@ contract LnBridgeV3Base is Base {
             MessagerType messagerType = messagerName2messagerType[messagerName];
             string memory channelIdKey = string.concat(".messager.", messagerName, ".id");
             string memory channelAddressKey = string.concat(".messager.", messagerName, ".messager");
-            uint256 lzChainId = config.readUint(channelIdKey);
+            uint256 msgChainId = config.readUint(channelIdKey);
             address messager = config.readAddress(channelAddressKey);
-            configureMessager(chainId, lzChainId, messagerType, messager);
+            configureMessager(chainId, msgChainId, messagerType, messager);
         }
         string[] memory tokenSymbols = config.readStringArray(".token.symbols.symbols");
         for (uint i = 0; i < tokenSymbols.length; i++) {
@@ -293,8 +302,18 @@ contract LnBridgeV3Base is Base {
         );
     }
 
+    function acceptOwnership() public {
+        address dao = safeAddress();
+        uint256 localChainId = block.chainid;
+        BridgeInfo memory localBridge = bridgerInfos[localChainId];
+        if (dao == ILnv3Bridge(localBridge.bridger).pendingDao()) {
+            ILnv3Bridge(localBridge.bridger).acceptOwnership();
+        }
+        require(ILnv3Bridge(localBridge.bridger).dao() == dao, "failed");
+    }
+
     // deploy proxy admin
-    function deployProxyAdmin() external returns(address) {
+    function deployProxyAdmin() public returns(address) {
         bytes memory byteCode = type(HelixProxyAdmin).creationCode;
         address dao = safeAddress();
         bytes memory initCode = bytes.concat(byteCode, abi.encode(dao));
@@ -307,7 +326,7 @@ contract LnBridgeV3Base is Base {
     }
 
     // deploy msgport messager
-    function deployMsgportMessager(address msgport) external returns(address) {
+    function deployMsgportMessager(address msgport) public returns(address) {
         bytes memory byteCode = type(MsgportMessager).creationCode;
         address dao = safeAddress();
         bytes memory initCode = bytes.concat(byteCode, abi.encode(dao, msgport));
@@ -320,7 +339,7 @@ contract LnBridgeV3Base is Base {
     }
 
     // deploy layerzero messager
-    function deployLayerzeroMessager(address endpoint) external returns(address) {
+    function deployLayerzeroMessager(address endpoint) public returns(address) {
         bytes memory byteCode = type(LayerZeroMessager).creationCode;
         address dao = safeAddress();
         bytes memory initCode = bytes.concat(byteCode, abi.encode(dao, endpoint));
@@ -333,7 +352,7 @@ contract LnBridgeV3Base is Base {
     }
 
     // deploy lnv3 logic
-    function deployLnBridgeV3Logic() external returns(address) {
+    function deployLnBridgeV3Logic() public returns(address) {
         bytes memory byteCode = type(HelixLnBridgeV3).creationCode;
         address expectedAddress = create2address(salt, keccak256(byteCode));
         if (expectedAddress.code.length == 0) {
@@ -344,7 +363,7 @@ contract LnBridgeV3Base is Base {
     }
 
     // deploy lnv3 proxy
-    function deployLnBridgeV3Proxy(address logicAddress, address proxyAdminAddress) external returns(address) {
+    function deployLnBridgeV3Proxy(address logicAddress, address proxyAdminAddress) public returns(address) {
         bytes memory byteCode = type(TransparentUpgradeableProxy).creationCode;
         address dao = safeAddress();
         bytes memory data = abi.encodeWithSelector(

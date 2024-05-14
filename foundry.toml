@@ -7,6 +7,7 @@ evm_version = "london"
 fs_permissions=[
   {access="read", path="./out"},
   {access="read", path= "./script/config" },
+  {access="read", path= "./sphinx.lock" },
   {access="read-write", path="./cache"},
 ]
 allow_paths = ["../.."]
@@ -21,3 +22,11 @@ arbitrum = "https://arb1.arbitrum.io/rpc"
 linea = "https://rpc.linea.build"
 ethereum = "https://rpc.ankr.com/eth"
 blast = "https://rpc.blast.io"
+polygon-zkevm = "https://zkevm-rpc.com"
+darwinia = "https://rpc.darwinia.network"
+bsc = "https://rpc.ankr.com/bsc"
+base = "https://mainnet.base.org"
+gnosis = "https://rpc.gnosischain.com"
+mantle = "https://rpc.mantle.xyz"
+scroll = "https://rpc.scroll.io"
+astar-zkevm = "https://rpc.startale.com/astar-zkevm"
