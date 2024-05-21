@@ -7,7 +7,7 @@
       "nonce": "0",
       "chainId": "46",
       "blockGasLimit": "20000000",
-      "blockNumber": "2733734",
+      "blockNumber": "2738147",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -64,7 +64,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
@@ -76,8 +76,8 @@
       "safeInitData": "0xb63e800d00000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000003000000000000000000000000a238cbeb142c10ef7ad8442c6d1f9e89e07e776100000000000000000000000000000000000000000000000000000000000001c0000000000000000000000000f48f2b2d2a534e402487b3ee7c18c33aec0fe5e4000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000e3993566b34e5367d1c602439997bd08c11ff70000000000000000000000000f14341a7f464320319025540e8fe48ad0fe5aec00000000000000000000000052386be2397e8eac26298f733b390684203fb58000000000000000000000000088a39b052d477cfde47600a7c9950a441ce61cb4000000000000000000000000e59261f6d4088bcd69985a3d369ff14cc54ef1e500000000000000000000000000000000000000000000000000000000000001448d80ff0a000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000f2008f3301c9eada5642b5bb12fd047d3ebb2932e619000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000248236d0b80000000000000000000000000000000000000000000000000000000000000000018f3301c9eada5642b5bb12fd047d3ebb2932e6190000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002411ea37fc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "nonce": "0",
       "chainId": "56",
-      "blockGasLimit": "138908389",
-      "blockNumber": "38885443",
+      "blockGasLimit": "140000000",
+      "blockNumber": "38903354",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -134,7 +134,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
@@ -147,7 +147,7 @@
       "nonce": "0",
       "chainId": "8453",
       "blockGasLimit": "60000000",
-      "blockNumber": "14706519",
+      "blockNumber": "14733439",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -204,7 +204,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
@@ -217,7 +217,7 @@
       "nonce": "0",
       "chainId": "100",
       "blockGasLimit": "17000000",
-      "blockNumber": "34040235",
+      "blockNumber": "34050681",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -274,7 +274,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
@@ -287,7 +287,7 @@
       "nonce": "0",
       "chainId": "5000",
       "blockGasLimit": "200000000000",
-      "blockNumber": "64036059",
+      "blockNumber": "64062981",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -344,7 +344,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
@@ -357,7 +357,7 @@
       "nonce": "0",
       "chainId": "534352",
       "blockGasLimit": "10000000",
-      "blockNumber": "5833371",
+      "blockNumber": "5851317",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -414,7 +414,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
@@ -427,7 +427,7 @@
       "nonce": "0",
       "chainId": "3776",
       "blockGasLimit": "1125899906842624",
-      "blockNumber": "2398959",
+      "blockNumber": "2417058",
       "newConfig": {
         "projectName": "Helix-DAO",
         "orgId": "cluanacaw000111jik4xs4wkl",
@@ -484,7 +484,7 @@
       "arbitraryChain": false,
       "executorAddress": "0x7e16116661CA8d66C73612382833153911Fa03B1",
       "libraries": [],
-      "gitCommit": "73511d0fc1036c763da1f64bb1978a0fe39ddadb",
+      "gitCommit": "50487a556df067ccdf96ade0efaf34330e58cd34",
       "safeFundingRequest": {
         "fundsRequested": "0",
         "startingBalance": "0"
