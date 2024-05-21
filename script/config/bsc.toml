@@ -10,7 +10,7 @@ types = ["layerzero"]
 
 [messager.layerzero]
 id = 102
-messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
+messager = "0x89AF830781A2C1d3580Db930bea11094F55AfEae"
 
 [token]
 [token.symbols]
