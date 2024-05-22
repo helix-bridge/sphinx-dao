@@ -1,0 +1,25 @@
+[base]
+name = "moonbeam"
+chainId = 1284
+deployer = "0x80D4c766C5142D1313D531Afe7384D0D5E108Db3"
+bridgev3 = "0xbA5D580B18b6436411562981e02c8A9aA1776D10"
+
+[messager]
+[messager.messagers]
+types = ["layerzero"]
+
+[messager.layerzero]
+id = 126
+messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
+
+[token]
+[token.symbols]
+symbols = ["usdc", "usdt"]
+
+[token.usdc]
+address = "0xFFfffffF7D2B0B761Af01Ca8e25242976ac0aD7D"
+decimals = 6
+
+[token.usdt]
+address = "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+decimals = 6

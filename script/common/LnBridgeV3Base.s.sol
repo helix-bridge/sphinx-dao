@@ -54,6 +54,10 @@ interface IErc20 {
     function symbol() view external returns(string memory);
 }
 
+interface IMessager {
+    function acceptOwnership() external;
+}
+
 interface IMsgportMessager {
     struct RemoteMessager {
         uint256 msgportRemoteChainId;
@@ -137,7 +141,7 @@ contract LnBridgeV3Base is Base {
         messagerName2messagerType['msgport'] = MessagerType.MsgportType;
         messagerName2messagerType['eth2arb'] = MessagerType.Eth2ArbType;
 
-        string[14] memory chains = ["arbitrum", "astar-zkevm", "base", "blast", "bsc", "ethereum", "gnosis", "linea", "mantle", "optimistic", "polygon-pos", "polygon-zkevm", "scroll", "darwinia"];
+        string[15] memory chains = ["arbitrum", "astar-zkevm", "base", "blast", "bsc", "ethereum", "gnosis", "linea", "mantle", "optimistic", "polygon-pos", "polygon-zkevm", "scroll", "darwinia", "moonbeam"];
         for (uint i = 0; i < chains.length; i++) {
             readConfig(chains[i]);
         }
@@ -310,6 +314,16 @@ contract LnBridgeV3Base is Base {
             ILnv3Bridge(localBridge.bridger).acceptOwnership();
         }
         require(ILnv3Bridge(localBridge.bridger).dao() == dao, "failed");
+    }
+
+    function messagerAcceptOwnership(MessagerType messagerType) public {
+        MessagerInfo memory messager = getMessagerFromConfigure(block.chainid, messagerType);
+        require(messager.messager != address(0), "messager not exist");
+        address dao = safeAddress();
+        if (dao != ILnv3Bridge(messager.messager).dao() && dao == ILnv3Bridge(messager.messager).pendingDao()) {
+            IMessager(messager.messager).acceptOwnership();
+        }
+        require(ILnv3Bridge(messager.messager).dao() == dao, "failed");
     }
 
     // deploy proxy admin
