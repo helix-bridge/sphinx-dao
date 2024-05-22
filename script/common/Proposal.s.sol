@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {AddMoonbeamNetwork6} from "../6_AddMoonbeamNetwork.s.sol";
+import {ConnectNetwork6} from "../6_ConnectNetwork.s.sol";
 
-contract Proposal is AddMoonbeamNetwork6 {}
+contract Proposal is ConnectNetwork6 {}

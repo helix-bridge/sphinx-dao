@@ -320,10 +320,10 @@ contract LnBridgeV3Base is Base {
         MessagerInfo memory messager = getMessagerFromConfigure(block.chainid, messagerType);
         require(messager.messager != address(0), "messager not exist");
         address dao = safeAddress();
-        if (dao == ILnv3Bridge(messager.messager).pendingDao()) {
+        if (dao != ILnv3Bridge(messager.messager).dao() && dao == ILnv3Bridge(messager.messager).pendingDao()) {
             IMessager(messager.messager).acceptOwnership();
         }
-        require(ILnv3Bridge(messager.messager).pendingDao() == dao, "failed");
+        require(ILnv3Bridge(messager.messager).dao() == dao, "failed");
     }
 
     // deploy proxy admin
