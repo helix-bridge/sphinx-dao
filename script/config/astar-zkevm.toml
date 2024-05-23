@@ -17,9 +17,9 @@ messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
 symbols = ["usdt", "usdc"]
 
 [token.usdt]
-address = "0x493257fD37EDB34451f62EDf8D2a0C418852bA4C"
+address = "0x1E4a5963aBFD975d8c9021ce480b42188849D41d"
 decimals = 6
 
 [token.usdc]
-address = "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4"
+address = "0xA8CE8aee21bC2A48a5EF670afCc9274C7bbbC035"
 decimals = 6
