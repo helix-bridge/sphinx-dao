@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ConnectNetwork6} from "../6_ConnectNetwork.s.sol";
+import {ConnectNetworkAndRegisterUsdt7} from "../7_ConnectNetworkAndRegisterUsdt.s.sol";
 
-contract Proposal is ConnectNetwork6 {}
+contract Proposal is ConnectNetworkAndRegisterUsdt7 {}

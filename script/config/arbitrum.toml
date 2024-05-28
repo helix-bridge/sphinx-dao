@@ -27,11 +27,14 @@ symbols = ["ring", "usdt", "usdc"]
 [token.ring]
 address = "0x9e523234D36973f9e38642886197D023C88e307e"
 decimals = 18
+protocolFee = 30000000
 
 [token.usdt]
 address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
 decimals = 6
+protocolFee = 100000
 
 [token.usdc]
 address = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8"
 decimals = 6
+protocolFee = 100000

@@ -19,7 +19,9 @@ symbols = ["usdc", "usdt"]
 [token.usdc]
 address = "0xFFfffffF7D2B0B761Af01Ca8e25242976ac0aD7D"
 decimals = 6
+protocolFee = 1000
 
 [token.usdt]
 address = "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
 decimals = 6
+protocolFee = 1000
