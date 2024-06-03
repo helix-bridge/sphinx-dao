@@ -23,4 +23,4 @@ symbols = ["usdb"]
 [token.usdb]
 address = "0x4300000000000000000000000000000000000003"
 decimals = 6
-
+protocolFee = 100000

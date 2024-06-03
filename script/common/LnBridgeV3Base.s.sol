@@ -93,6 +93,7 @@ contract LnBridgeV3Base is Base {
         address token;
         uint8 decimals;
         string symbol;
+        uint112 protocolFee;
         bool configured;
     }
 
@@ -172,9 +173,13 @@ contract LnBridgeV3Base is Base {
             string memory symbol = tokenSymbols[i];
             string memory tokenAddressKey = string.concat(".token.", symbol, ".address");
             string memory tokenDecimalsKey = string.concat(".token.", symbol, ".decimals");
+            string memory tokenProtocolFeeKey = string.concat(".token.", symbol, ".protocolFee");
             address tokenAddress = config.readAddress(tokenAddressKey);
             uint8 tokenDecimals = uint8(config.readUint(tokenDecimalsKey));
-            configureTokenInfo(chainId, symbol, tokenAddress, tokenDecimals);
+            uint112 protocolFee = uint112(config.readUint(tokenProtocolFeeKey));
+            // the decimals saved in toml file is 6
+            protocolFee = uint112(protocolFee * 10 ** tokenDecimals / 10 ** 6);
+            configureTokenInfo(chainId, symbol, tokenAddress, tokenDecimals, protocolFee);
         }
     }
 
@@ -183,9 +188,9 @@ contract LnBridgeV3Base is Base {
         messagers[key] = MessagerInfo(messagerAddress, lzChainId);
     }
 
-    function configureTokenInfo(uint256 chainId, string memory symbol, address token, uint8 decimals) internal {
+    function configureTokenInfo(uint256 chainId, string memory symbol, address token, uint8 decimals, uint112 protocolFee) internal {
         bytes32 key = keccak256(abi.encodePacked(chainId, symbol));
-        tokens[key] = TokenInfo(token, decimals, symbol, true);
+        tokens[key] = TokenInfo(token, decimals, symbol, protocolFee, true);
     }
 
     function getMessagerFromConfigure(uint256 chainId, MessagerType messagerType) public view returns(MessagerInfo memory messager) {
