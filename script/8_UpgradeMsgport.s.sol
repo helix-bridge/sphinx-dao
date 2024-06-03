@@ -15,6 +15,6 @@ contract UpgradeMsgport8 is LnBridgeV3Base {
         if (block.chainid == CHAINID_CRAB || block.chainid == CHAINID_DARWINIA) {
             messagerAcceptOwnership(MessagerType.MsgportType);
         }
-        messagerUpdateLowMessager("msgport", 0x0000000000000000000000000000000000000000);
+        messagerUpdateLowMessager("msgport", 0x2cd1867Fb8016f93710B6386f7f9F1D540A60812);
     }
 }
