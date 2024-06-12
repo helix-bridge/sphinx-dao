@@ -65,6 +65,8 @@ interface IMsgportMessager {
     }
     function remoteMessagers(uint256 remoteChainId) view external returns(RemoteMessager memory);
     function setRemoteMessager(uint256 appRemoteChainId, uint256 msgportRemoteChainId, address remoteMessager) external;
+    function msgport() view external returns(IMessagePort);
+    function setMsgPort(address msgport) external;
 }
 
 interface ILayerZeroMessager {
@@ -74,6 +76,8 @@ interface ILayerZeroMessager {
     }
     function remoteMessagers(uint256 remoteChainId) view external returns(RemoteMessager memory);
     function setRemoteMessager(uint256 appRemoteChainId, uint16 lzRemoteChainId, address remoteMessager) external;
+    function endpoint() view external returns(ILayerZeroEndpoint);
+    function updateEndpoint(address endpoint) external;
 }
 
 contract LnBridgeV3Base is Base {
@@ -142,7 +146,7 @@ contract LnBridgeV3Base is Base {
         messagerName2messagerType['msgport'] = MessagerType.MsgportType;
         messagerName2messagerType['eth2arb'] = MessagerType.Eth2ArbType;
 
-        string[15] memory chains = ["arbitrum", "astar-zkevm", "base", "blast", "bsc", "ethereum", "gnosis", "linea", "mantle", "optimistic", "polygon-pos", "polygon-zkevm", "scroll", "darwinia", "moonbeam"];
+        string[16] memory chains = ["arbitrum", "astar-zkevm", "base", "blast", "bsc", "ethereum", "gnosis", "linea", "mantle", "optimistic", "polygon-pos", "polygon-zkevm", "scroll", "darwinia", "moonbeam", "crab"];
         for (uint i = 0; i < chains.length; i++) {
             readConfig(chains[i]);
         }
@@ -329,6 +333,23 @@ contract LnBridgeV3Base is Base {
             IMessager(messager.messager).acceptOwnership();
         }
         require(ILnv3Bridge(messager.messager).dao() == dao, "failed");
+    }
+
+    function messagerUpdateLowMessager(string memory messagerName, address lowMessager) public {
+        MessagerType messagerType = messagerName2messagerType[messagerName];
+        MessagerInfo memory messager = getMessagerFromConfigure(block.chainid, messagerType);
+        require(messager.messager != address(0), "messager not exist");
+        address dao = safeAddress();
+        require(ILnv3Bridge(messager.messager).dao() == dao, "!dao");
+        if(messagerType == MessagerType.MsgportType) {
+            if (lowMessager != address(IMsgportMessager(messager.messager).msgport())) {
+                IMsgportMessager(messager.messager).setMsgPort(lowMessager);
+            }
+        } else if (messagerType == MessagerType.LayerzeroType) {
+            if (lowMessager != address(ILayerZeroMessager(messager.messager).endpoint())) {
+                ILayerZeroMessager(messager.messager).updateEndpoint(lowMessager);
+            }
+        }
     }
 
     // deploy proxy admin
