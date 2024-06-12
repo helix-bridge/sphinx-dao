@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {UpgradeMsgport8} from "../8_UpgradeMsgport.s.sol";
+import {TransferXTokenOwnership9} from "../9_TransferXTokenOwnership.s.sol";
 
-contract Proposal is UpgradeMsgport8 {}
+contract Proposal is TransferXTokenOwnership9 {}
