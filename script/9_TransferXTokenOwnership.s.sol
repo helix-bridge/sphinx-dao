@@ -47,6 +47,9 @@ contract TransferXTokenOwnership9 is Base {
     uint256 DARWINIA_CHAINID = 46;
 
     function run() public sphinx {
+        bool executed = true;
+
+        if (executed) return;
         if (block.chainid == DARWINIA_CHAINID) {
             /*
             XTokenBase backing = XTokenBase(backingAddress);
