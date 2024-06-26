@@ -10,6 +10,12 @@ interface Create2Deploy {
     function deploy(bytes memory code, uint256 salt) external;
 }
 
+interface IProxyAdmin {
+    function getProxyAdmin(TransparentUpgradeableProxy proxy) external view returns (address);
+    function changeProxyAdmin(TransparentUpgradeableProxy proxy, address newAdmin) external;
+    function owner() external view returns(address);
+}
+
 interface ILnv3Bridge {
     struct MessagerService {
         address sendService;
@@ -56,6 +62,8 @@ interface IErc20 {
 
 interface IMessager {
     function acceptOwnership() external;
+    function setWhiteList(address caller, bool enable) external;
+    function whiteList(address caller) view external returns(bool);
 }
 
 interface IMsgportMessager {
@@ -67,6 +75,7 @@ interface IMsgportMessager {
     function setRemoteMessager(uint256 appRemoteChainId, uint256 msgportRemoteChainId, address remoteMessager) external;
     function msgport() view external returns(IMessagePort);
     function setMsgPort(address msgport) external;
+    function dao() view external returns(address);
 }
 
 interface ILayerZeroMessager {
@@ -78,6 +87,7 @@ interface ILayerZeroMessager {
     function setRemoteMessager(uint256 appRemoteChainId, uint16 lzRemoteChainId, address remoteMessager) external;
     function endpoint() view external returns(ILayerZeroEndpoint);
     function updateEndpoint(address endpoint) external;
+    function dao() view external returns(address);
 }
 
 contract LnBridgeV3Base is Base {
@@ -106,10 +116,12 @@ contract LnBridgeV3Base is Base {
         uint256 chainId;
         address deployer;
         address bridger;
+        address proxyAdmin;
     }
 
     struct MessagerInfo {
         address messager;
+        address endpoint;
         uint256 chainId;
     }
 
@@ -160,41 +172,45 @@ contract LnBridgeV3Base is Base {
         chainName2chainId[chainName] = chainId;
         address deployer = config.readAddress(".base.deployer");
         address bridger = config.readAddress(".base.bridgev3");
-        bridgerInfos[chainId] = BridgeInfo(chainName, chainId, deployer, bridger);
+        address proxyAdmin = config.readAddress(".base.proxyAdmin");
+        bridgerInfos[chainId] = BridgeInfo(chainName, chainId, deployer, bridger, proxyAdmin);
 
         string[] memory messagerNames = config.readStringArray(".messager.messagers.types");
         for (uint i = 0; i < messagerNames.length; i++) {
             string memory messagerName = messagerNames[i];
-            MessagerType messagerType = messagerName2messagerType[messagerName];
-            string memory channelIdKey = string.concat(".messager.", messagerName, ".id");
-            string memory channelAddressKey = string.concat(".messager.", messagerName, ".messager");
-            uint256 msgChainId = config.readUint(channelIdKey);
-            address messager = config.readAddress(channelAddressKey);
-            configureMessager(chainId, msgChainId, messagerType, messager);
+            configureMessager(config, messagerName);
         }
         string[] memory tokenSymbols = config.readStringArray(".token.symbols.symbols");
         for (uint i = 0; i < tokenSymbols.length; i++) {
             string memory symbol = tokenSymbols[i];
-            string memory tokenAddressKey = string.concat(".token.", symbol, ".address");
-            string memory tokenDecimalsKey = string.concat(".token.", symbol, ".decimals");
-            string memory tokenProtocolFeeKey = string.concat(".token.", symbol, ".protocolFee");
-            address tokenAddress = config.readAddress(tokenAddressKey);
-            uint8 tokenDecimals = uint8(config.readUint(tokenDecimalsKey));
-            uint112 protocolFee = uint112(config.readUint(tokenProtocolFeeKey));
-            // the decimals saved in toml file is 6
-            protocolFee = uint112(protocolFee * 10 ** tokenDecimals / 10 ** 6);
-            configureTokenInfo(chainId, symbol, tokenAddress, tokenDecimals, protocolFee);
+            configureTokenInfo(config, chainId, symbol);
         }
     }
 
-    function configureMessager(uint256 chainId, uint256 lzChainId, MessagerType messagerType, address messagerAddress) internal {
-        bytes32 key = keccak256(abi.encodePacked(chainId, messagerType));
-        messagers[key] = MessagerInfo(messagerAddress, lzChainId);
+    function configureMessager(string memory config, string memory messagerName) internal {
+        MessagerType messagerType = messagerName2messagerType[messagerName];
+        string memory channelIdKey = string.concat(".messager.", messagerName, ".id");
+        string memory channelAddressKey = string.concat(".messager.", messagerName, ".messager");
+        string memory channelLowAddressKey = string.concat(".messager.", messagerName, ".endpoint");
+        uint256 msgChainId = config.readUint(channelIdKey);
+        address messagerAddress = config.readAddress(channelAddressKey);
+        address endpoint = config.readAddress(channelLowAddressKey);
+
+        bytes32 key = keccak256(abi.encodePacked(msgChainId, messagerType));
+        messagers[key] = MessagerInfo(messagerAddress, endpoint, msgChainId);
     }
 
-    function configureTokenInfo(uint256 chainId, string memory symbol, address token, uint8 decimals, uint112 protocolFee) internal {
+    function configureTokenInfo(string memory config, uint256 chainId, string memory symbol) internal {
+        string memory tokenAddressKey = string.concat(".token.", symbol, ".address");
+        string memory tokenDecimalsKey = string.concat(".token.", symbol, ".decimals");
+        string memory tokenProtocolFeeKey = string.concat(".token.", symbol, ".protocolFee");
+        address tokenAddress = config.readAddress(tokenAddressKey);
+        uint8 tokenDecimals = uint8(config.readUint(tokenDecimalsKey));
+        uint112 protocolFee = uint112(config.readUint(tokenProtocolFeeKey));
+        // the decimals saved in toml file is 6
+        protocolFee = uint112(protocolFee * 10 ** tokenDecimals / 10 ** 6);
         bytes32 key = keccak256(abi.encodePacked(chainId, symbol));
-        tokens[key] = TokenInfo(token, decimals, symbol, protocolFee, true);
+        tokens[key] = TokenInfo(tokenAddress, tokenDecimals, symbol, protocolFee, true);
     }
 
     function getMessagerFromConfigure(uint256 chainId, MessagerType messagerType) public view returns(MessagerInfo memory messager) {
@@ -352,6 +368,39 @@ contract LnBridgeV3Base is Base {
         }
     }
 
+    function checkProxyAdminOwner() public {
+        address dao = safeAddress();
+        uint256 localChainId = block.chainid;
+        BridgeInfo memory localBridge = bridgerInfos[localChainId];
+        require(localBridge.bridger != address(0), "invalid local bridge");
+        IProxyAdmin admin = IProxyAdmin(localBridge.proxyAdmin);
+        address proxyAdmin = admin.getProxyAdmin(TransparentUpgradeableProxy(payable(localBridge.bridger)));
+        require(proxyAdmin == localBridge.proxyAdmin, "!proxyAdmin");
+        require(admin.owner() == dao, "!admin owner");
+    }
+
+    function checkBridgeOwner() public {
+        address dao = safeAddress();
+        uint256 localChainId = block.chainid;
+        BridgeInfo memory localBridge = bridgerInfos[localChainId];
+        require(localBridge.bridger != address(0), "invalid local bridge");
+        ILnv3Bridge bridge = ILnv3Bridge(localBridge.bridger);
+        require(bridge.dao() == dao, "!dao");
+    }
+
+    function checkMessagerOwner() public {
+        address dao = safeAddress();
+        uint256 localChainId = block.chainid;
+        MessagerInfo memory lzMessager = getMessagerFromConfigure(localChainId, MessagerType.LayerzeroType);
+        if (lzMessager.messager != address(0)) {
+            require(ILayerZeroMessager(lzMessager.messager).dao() == dao, "!lzmessager dao");
+        }
+        MessagerInfo memory msgportMessager = getMessagerFromConfigure(localChainId, MessagerType.MsgportType);
+        if (msgportMessager.messager != address(0)) {
+            require(IMsgportMessager(msgportMessager.messager).dao() == dao, "!msgportmessager dao");
+        }
+    }
+
     // deploy proxy admin
     function deployProxyAdmin() public returns(address) {
         bytes memory byteCode = type(HelixProxyAdmin).creationCode;
@@ -418,6 +467,23 @@ contract LnBridgeV3Base is Base {
         }
         require(expectedAddress.code.length > 0, "lnbridgev3 proxy deployed failed");
         return expectedAddress;
+    }
+
+    function deployLnBridgeV3(string memory messagerName) public {
+        address proxyAdmin = deployProxyAdmin();
+        address lnv3LogicAddress = deployLnBridgeV3Logic();
+        address lnv3ProxyAddress = deployLnBridgeV3Proxy(lnv3LogicAddress, proxyAdmin);
+
+        uint256 localChainId = block.chainid;
+        MessagerType messagerType = messagerName2messagerType[messagerName];
+        MessagerInfo memory messagerInfo = getMessagerFromConfigure(localChainId, messagerType);
+
+        address messager = messagerType == MessagerType.LayerzeroType ? deployLayerzeroMessager(messagerInfo.endpoint) : deployMsgportMessager(messagerInfo.endpoint);
+
+        bool isWhiteList = IMessager(messager).whiteList(lnv3ProxyAddress);
+        if (!isWhiteList) {
+            IMessager(messager).setWhiteList(lnv3ProxyAddress, true);
+        }
     }
 }
 
