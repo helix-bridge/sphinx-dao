@@ -3,6 +3,7 @@ name = "blast"
 chainId = 81457
 deployer = "0x9bc1C7567DDBcaF2212185b6665D755d842d01E4"
 bridgev3 = "0xB180D7DcB5CC161C862aD60442FA37527546cAFC"
+proxyAdmin = "0x7684389eAa307e25Af38A31873E31Cc3B513EE01"
 
 [messager]
 [messager.messagers]
@@ -11,10 +12,12 @@ types = ["layerzero", "msgport"]
 [messager.layerzero]
 id = 243
 messager = "0x8A87497488073307E1a17e8A12475a94Afcb413f"
+endpoint = "0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7"
 
 [messager.msgport]
 id = 81457
 messager = "0x98982b1685a63596834a05C1288dA7fbF27d684E"
+endpoint = "0x2cd1867Fb8016f93710B6386f7f9F1D540A60812"
 
 [token]
 [token.symbols]

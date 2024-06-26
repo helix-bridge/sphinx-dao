@@ -3,6 +3,7 @@ name = "astar-zkevm"
 chainId = 3776
 deployer = "0x9bc1C7567DDBcaF2212185b6665D755d842d01E4"
 bridgev3 = "0xD476650e03a45E70202b0bcAfa04E1513920f83a"
+proxyAdmin = "0x7684389eAa307e25Af38A31873E31Cc3B513EE01"
 
 [messager]
 [messager.messagers]
@@ -11,6 +12,7 @@ types = ["layerzero"]
 [messager.layerzero]
 id = 257
 messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
+endpoint = "0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7"
 
 [token]
 [token.symbols]

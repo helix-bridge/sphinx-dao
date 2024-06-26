@@ -3,6 +3,7 @@ name = "base"
 chainId = 8453
 deployer = "0x80D4c766C5142D1313D531Afe7384D0D5E108Db3"
 bridgev3 = "0xbA5D580B18b6436411562981e02c8A9aA1776D10"
+proxyAdmin = "0x601dE3B81c7cE04BecE3b29e5cEe4F3251d250dB"
 
 [messager]
 [messager.messagers]
@@ -11,6 +12,7 @@ types = ["layerzero"]
 [messager.layerzero]
 id = 184
 messager = "0x61B6B8c7C00aA7F060a2BEDeE6b11927CC9c3eF1"
+endpoint = "0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7"
 
 [token]
 [token.symbols]
