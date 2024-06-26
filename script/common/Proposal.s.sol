@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {TransferXTokenOwnership9} from "../9_TransferXTokenOwnership.s.sol";
+import {MoveProtocolFeeReceiver10} from "../10_MoveProtocolFeeReceiver.s.sol";
 
-contract Proposal is TransferXTokenOwnership9 {}
+contract Proposal is MoveProtocolFeeReceiver10 {}
